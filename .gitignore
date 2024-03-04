@@ -155,3 +155,5 @@ cython_debug/
 .idea/workspace.xml
 
 AI_Chatbot/.idea/workspace.xml
+.idea/vcs.xml
+.idea/inspectionProfiles/profiles_settings.xml
