@@ -27,6 +27,9 @@ share/python-wheels/
 MANIFEST
 misc.xml
 .idea/workspace.xml
+llama
+llama-2-7b-chat-hf
+models--meta-llama--Llama-2-7b-chat-hf
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
