@@ -80,8 +80,11 @@ def get_response(prompt) -> str:
         outputs = model.generate(**inputs, max_new_tokens=512)
         response = tokenizer.decode(outputs[0], skip_special_tokens=True)
     return response
+def introduce_chatbot():
+    print ("Hei! Velkommen til forbrukertilsynets chatbot. Jeg er her for å svare på spørsmål, eller veilede deg til riktige ressurser dersom du trenger hjelp")
 
 def main() -> None:
+    introduce_chatbot()
     prompt = input("Still meg et spørsmål: ")
     response = get_response(prompt)
     print(f"Response: {response}")
