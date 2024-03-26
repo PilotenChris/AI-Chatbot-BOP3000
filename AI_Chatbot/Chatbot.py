@@ -1,7 +1,8 @@
 import torch
 import transformers
 import time
-from Db import host, port, db_name, collection_name, field_names
+from Config import embedding_url, hf_token
+from Db import collection
 from pymongo import MongoClient
 from dotenv import dotenv_values
 from llama_index.core import SummaryIndex
@@ -12,6 +13,7 @@ from langchain_community.llms import HuggingFacePipeline
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.agents import load_tools
 from langchain.agents import initialize_agent
+import requests
 
 
 # Llama-2 from Hugging Face
@@ -64,16 +66,34 @@ def get_response(prompt) -> str:
     return response
     
     """
+# Function to generate embeddings using huggingface api
+def generate_embedding(text: str) -> list[float]:
+    response = requests.post(
+        embedding_url,
+        headers={"Authorization": f"Bearer {hf_token}"},
+        json={"inputs": text}
+    )
+
+    if response.status_code != 200:
+        raise ValueError(f"Request failed with status code {response.status_code}: {response.text}")
+
+    return response.json()
 
 def get_response(prompt) -> str:
-    query_dict = {"text": {"$regex": prompt, "$options": "i"}}  # Case-insensitive search by regex
-    reader = SimpleMongoReader(host, port)
-    documents = reader.load_data(db_name, collection_name, field_names, query_dict=query_dict)
+    results = list(collection.aggregate([
+        {"$vectorSearch": {
+            "queryVector": generate_embedding(prompt),
+            "path": "plot_embedding_hf",
+            "numCandidates": 100,
+            "limit": 4,
+            "index": "LeadParagraphSemanticSearch",
+        }}
+    ]))
 
-    if documents:
-        # Get response information from database
-        response_snippets = [doc["text"] for doc in documents][:3]  # Limit to top 3 snippets
-        response = "Found relevant information:\n  * " + "\n  * ".join(response_snippets)
+    if results:
+        # Process the results to compile response snippets
+        response_snippets = [doc["Lead_Paragraph"] for doc in results]
+        response = "Found relevant information:\n" + "\n".join(["  * " + snippet for snippet in response_snippets])
     else:
         # Llama2 as fallback for response testing
         inputs = tokenizer(f"Q: {prompt} A:", return_tensors="pt").to(device)
