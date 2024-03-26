@@ -83,7 +83,7 @@ def get_response(prompt) -> str:
     results = list(collection.aggregate([
         {"$vectorSearch": {
             "queryVector": generate_embedding(prompt),
-            "path": "plot_embedding_hf",
+            "path": "Lead_Paragraph_embedding_hf",
             "numCandidates": 100,
             "limit": 4,
             "index": "LeadParagraphSemanticSearch",
