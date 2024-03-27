@@ -91,14 +91,16 @@ def introduce_chatbot():
 
 def main() -> None:
     introduce_chatbot()
-    prompt = input("Still meg et spørsmål: ")
-    response = get_response(prompt)
+    while(True):
+        print("\n")
+        prompt = input("Still meg et spørsmål: ")
+        response = get_response(prompt)
 
-    # Record the end time
-    end = time.time()
+        # Record the end time
+        end = time.time()
 
-    # Prints out the response and the total run time in seconds
-    print(f"Response: {response}, time: {end - start}")
+        # Prints out the response and the total run time in seconds
+        print(f"Response: {response}, time: {end - start}")
 
 if __name__ == '__main__':
     main()
