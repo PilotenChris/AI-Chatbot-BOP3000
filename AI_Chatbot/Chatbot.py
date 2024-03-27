@@ -93,7 +93,6 @@ def main() -> None:
     introduce_chatbot()
     prompt = input("Still meg et spørsmål: ")
     response = get_response(prompt)
-    print(f"Response: {response}")
 
     # Record the end time
     end = time.time()
