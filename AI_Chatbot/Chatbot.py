@@ -1,8 +1,7 @@
 import torch
 import transformers
 import time
-from Config import embedding_url, hf_token
-from Db import collection
+from Db import collection, generate_embedding
 from pymongo import MongoClient
 from dotenv import dotenv_values
 from llama_index.core import SummaryIndex
@@ -13,7 +12,6 @@ from langchain_community.llms import HuggingFacePipeline
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.agents import load_tools
 from langchain.agents import initialize_agent
-import requests
 
 
 # Llama-2 from Hugging Face
@@ -66,18 +64,6 @@ def get_response(prompt) -> str:
     return response
     
     """
-# Function to generate embeddings using huggingface api
-def generate_embedding(text: str) -> list[float]:
-    response = requests.post(
-        embedding_url,
-        headers={"Authorization": f"Bearer {hf_token}"},
-        json={"inputs": text}
-    )
-
-    if response.status_code != 200:
-        raise ValueError(f"Request failed with status code {response.status_code}: {response.text}")
-
-    return response.json()
 
 def get_response(prompt) -> str:
     results = list(collection.aggregate([
