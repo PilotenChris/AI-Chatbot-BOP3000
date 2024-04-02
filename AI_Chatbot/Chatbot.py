@@ -79,13 +79,22 @@ def get_response(prompt) -> str:
     if results:
         # Process the results to compile response snippets
         response_snippets = [doc["Lead_Paragraph"] for doc in results]
-        response = "Found relevant information:\n" + "\n".join(["  * " + snippet for snippet in response_snippets])
+        response = "\n" + "\n".join(["  * " + snippet for snippet in response_snippets])
     else:
         # Llama2 as fallback for response testing
         inputs = tokenizer(f"Q: {prompt} A:", return_tensors="pt").to(device)
         outputs = model.generate(**inputs, max_new_tokens=512)
         response = tokenizer.decode(outputs[0], skip_special_tokens=True)
     return response
+
+def feedback() -> str:
+    print("\nØnsker du å gi en tilbakemelding på svaret du fikk? (y/n)")
+    feedback_choice = input().lower()
+    if feedback_choice == 'y':
+        feedback_response = input("Din tilbakemelding: ")
+        print(feedback_response)
+    return "Takk for tilbakemeldingen!"
+
 def introduce_chatbot():
     print ("Hei! Velkommen til forbrukertilsynets chatbot. Jeg er her for å svare på spørsmål, eller veilede deg til riktige ressurser dersom du trenger hjelp")
 
@@ -100,7 +109,8 @@ def main() -> None:
         end = time.time()
 
         # Prints out the response and the total run time in seconds
-        print(f"Response: {response}, time: {end - start}")
+        print(f"Svar: {response}, time: {end - start}")
+        feedback()
 
 if __name__ == '__main__':
     main()
