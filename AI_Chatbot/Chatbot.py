@@ -1,4 +1,4 @@
-import torch
+import torch  # type: ignore
 import transformers
 import time
 from Db import collection, generate_embedding
@@ -8,10 +8,6 @@ from llama_index.core import SummaryIndex
 from llama_index.readers.mongodb import SimpleMongoReader
 from transformers import LlamaTokenizer, AutoConfig, LlamaForCausalLM, pipeline, BitsAndBytesConfig
 from torch import cuda, bfloat16
-from langchain_community.llms import HuggingFacePipeline
-from langchain.memory import ConversationBufferWindowMemory
-from langchain.agents import load_tools
-from langchain.agents import initialize_agent
 
 
 # Llama-2 from Hugging Face
@@ -28,9 +24,6 @@ tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf")
 
 # Determine if a GPU is available and set the device accordingly
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-# Record the start time
-start = time.time()
 
 # Check if CUDA is available (for informational purposes)
 print(torch.cuda.is_available())
@@ -60,10 +53,12 @@ tokenizer = LlamaTokenizer.from_pretrained(pretrained_model_name_or_path=model_d
 def get_response(prompt) -> str:
     inputs = tokenizer(f"Q: {prompt} A:", return_tensors="pt").to(device)
     outputs = model.generate(**inputs, max_new_tokens=512)
-    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    answer: int = full_response.find("A:") + 2
+    response = full_response[answer:].strip()
     return response
-    
     """
+
 
 def get_response(prompt) -> str:
     results = list(collection.aggregate([
@@ -84,7 +79,9 @@ def get_response(prompt) -> str:
         # Llama2 as fallback for response testing
         inputs = tokenizer(f"Q: {prompt} A:", return_tensors="pt").to(device)
         outputs = model.generate(**inputs, max_new_tokens=512)
-        response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        answer: int = full_response.find("A:") + 2
+        response = full_response[answer:].strip()
     return response
 
 def feedback() -> str:
@@ -105,11 +102,8 @@ def main() -> None:
         prompt = input("Still meg et spørsmål: ")
         response = get_response(prompt)
 
-        # Record the end time
-        end = time.time()
-
         # Prints out the response and the total run time in seconds
-        print(f"Svar: {response}, time: {end - start}")
+        print(f"Svar: {response}")
         feedback()
 
 if __name__ == '__main__':
