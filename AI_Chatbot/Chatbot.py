@@ -11,7 +11,7 @@ from torch import cuda, bfloat16
 
 
 # Llama-2 from Hugging Face
-model_dir = "meta-llama/Llama-2-7b-chat-hf"
+model_dir = "RuterNorway/Llama-2-7b-chat-norwegian"
 
 """
 model = AutoModelForCausalLM.from_pretrained(
@@ -61,7 +61,7 @@ def get_response(prompt) -> str:
 
 
 def get_response(prompt) -> str:
-    results = list(collection.aggregate([
+    results: list = list(collection.aggregate([
         {"$vectorSearch": {
             "queryVector": generate_embedding(prompt),
             "path": "Lead_Paragraph_embedding_hf",
@@ -74,14 +74,14 @@ def get_response(prompt) -> str:
     if results:
         # Process the results to compile response snippets
         response_snippets = [doc["Lead_Paragraph"] for doc in results]
-        response = "\n" + "\n".join(["  * " + snippet for snippet in response_snippets])
+        response: str = "\n" + "\n".join(["  * " + snippet for snippet in response_snippets])
     else:
         # Llama2 as fallback for response testing
         inputs = tokenizer(f"Q: {prompt} A:", return_tensors="pt").to(device)
         outputs = model.generate(**inputs, max_new_tokens=512)
-        full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        full_response: str = tokenizer.decode(outputs[0], skip_special_tokens=True)
         answer: int = full_response.find("A:") + 2
-        response = full_response[answer:].strip()
+        response: str = full_response[answer:].strip()
     return response
 
 def feedback() -> str:
