@@ -1,6 +1,8 @@
+import os
 import torch  # type: ignore
 import transformers
 import time
+import requests
 from Db import collection, generate_embedding
 from pymongo import MongoClient
 from dotenv import dotenv_values
@@ -9,6 +11,8 @@ from llama_index.readers.mongodb import SimpleMongoReader
 from transformers import LlamaTokenizer, AutoConfig, LlamaForCausalLM, pipeline, BitsAndBytesConfig
 from torch import cuda, bfloat16
 
+# feedback_uri = os.getenv('FEEDBACK_URL')
+conversation_history: list = []
 
 # Llama-2 from Hugging Face
 model_dir = "RuterNorway/Llama-2-7b-chat-norwegian"
@@ -82,6 +86,7 @@ def get_response(prompt) -> str:
         full_response: str = tokenizer.decode(outputs[0], skip_special_tokens=True)
         answer: int = full_response.find("A:") + 2
         response: str = full_response[answer:].strip()
+    conversation_history.append(f"question: {prompt} response: {response}")
     return response
 
 def feedback() -> str:
@@ -89,7 +94,20 @@ def feedback() -> str:
     feedback_choice = input().lower()
     if feedback_choice == 'y':
         feedback_response = input("Din tilbakemelding: ")
-        print(feedback_response)
+
+        # Prepare data for API request
+        data = {
+            'conversation': '\n'.join(conversation_history),
+            'feedback': feedback_response,
+        }
+
+        # Add feedback at end of conversation
+        conversation_history.append(f"feedback: {feedback_response}")
+
+        # Send POST request to Django API
+        print(conversation_history)
+        # response =  requests.post(feedback_uri, json=data)
+
     return "Takk for tilbakemeldingen!"
 
 def introduce_chatbot():
@@ -101,10 +119,15 @@ def main() -> None:
         print("\n")
         prompt = input("Still meg et spørsmål: ")
         response = get_response(prompt)
+        # For testing. To be replaced by button on webpage
+        if prompt == 'stop':
+            break
 
         # Prints out the response and the total run time in seconds
         print(f"Svar: {response}")
-        feedback()
+
+    feedback()
+
 
 if __name__ == '__main__':
     main()
