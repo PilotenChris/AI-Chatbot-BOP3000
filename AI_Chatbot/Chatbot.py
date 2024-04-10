@@ -51,43 +51,69 @@ model = LlamaForCausalLM.from_pretrained(
 # Load the tokenizer for the model
 tokenizer = LlamaTokenizer.from_pretrained(pretrained_model_name_or_path=model_dir, cache_dir="./", device_map="auto")
 
+# Company name for the company using this chatbot
+company: str = "Forbrukertilsynet"
+
+# Template for use to make the chatbot follow what we want it to do
+template: str = (f"Du er en hjelpsom medarbeider for {company} og vil hjelpe brukeren med å finne informasjon om "
+                 f"spørsmålet, du skal bare bruke konteksten 'dataene fra {company}' til å svare på spørsmålet og "
+                 f"linke til hvor brukeren kan finne flere svar.")
+
+
+answer_indicator: str = "Svar:"
+
 # Function to generate a response based on a given prompt
 # max_new_tokens is a bit too much at 1024, so use between 512-1024
-"""
-def get_response(prompt) -> str:
-    inputs = tokenizer(f"Q: {prompt} A:", return_tensors="pt").to(device)
+def generate_answer_with_context(question: str, context: str) -> str:
+    inputs = tokenizer(f"{template}\n Kontekst: {context}\n Spørsmål: {question}\n. Svar:", return_tensors="pt").to(device)
     outputs = model.generate(**inputs, max_new_tokens=512)
     full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    answer: int = full_response.find("A:") + 2
+    answer: int = full_response.find(answer_indicator) + len(answer_indicator)
     response = full_response[answer:].strip()
     return response
-    """
 
 
-def get_response(prompt) -> str:
+def get_response(prompt: str) -> str:
     results: list = list(collection.aggregate([
         {"$vectorSearch": {
             "queryVector": generate_embedding(prompt),
             "path": "Lead_Paragraph_embedding_hf",
-            "numCandidates": 100,
-            "limit": 4,
+            "numCandidates": 50,
+            "limit": 2,
             "index": "LeadParagraphSemanticSearch",
         }}
     ]))
 
+    response: str
+
+
     if results:
-        # Process the results to compile response snippets
-        response_snippets = [doc["Lead_Paragraph"] for doc in results]
-        response: str = "\n" + "\n".join(["  * " + snippet for snippet in response_snippets])
+        full_context: str = "Basert på dokumentene, oppsummer hovedavsnittet og list opp seksjonstitlene:\n"
+
+        for idx, doc in enumerate(results, start=1):
+            context = (f"\nDokument {idx} Tittel: '{doc['Title']}'\n"
+                       f"Hovedavsnitt: '{doc['Lead_Paragraph']}'\n"
+                       "Seksjonstitler:")
+
+            section_titles: str = '\n'.join([f"- {para['Title']}" for para in doc.get("Paragraphs", [])])
+
+            link: str = f"\nLes mer: https://www.forbrukertilsynet.no/{doc['link']}"
+
+            full_context += f"{context}\n{section_titles}{link}\n"
+
+        final_prompt: str = f"{full_context}\nSpørsmål: {prompt}\nSvar:"
+
+        inputs = tokenizer(final_prompt, return_tensors="pt").to(device)
+        outputs = model.generate(**inputs, max_new_tokens=512, pad_token_id=tokenizer.eos_token_id, temperature=0.01)
+        full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+        answer: int = full_response.rfind(answer_indicator) + len(answer_indicator)
+        response = full_response[answer:].strip()
     else:
-        # Llama2 as fallback for response testing
-        inputs = tokenizer(f"Q: {prompt} A:", return_tensors="pt").to(device)
-        outputs = model.generate(**inputs, max_new_tokens=512)
-        full_response: str = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        answer: int = full_response.find("A:") + 2
-        response: str = full_response[answer:].strip()
-    conversation_history.append(f"question: {prompt} response: {response}")
+        response = "Beklager, jeg kunne ikke finne nok informasjon om spørsmålet ditt"
+
     return response
+
 
 def feedback() -> str:
     print("\nØnsker du å gi en tilbakemelding på svaret du fikk? (y/n)")
@@ -110,12 +136,15 @@ def feedback() -> str:
 
     return "Takk for tilbakemeldingen!"
 
+
 def introduce_chatbot():
-    print ("Hei! Velkommen til forbrukertilsynets chatbot. Jeg er her for å svare på spørsmål, eller veilede deg til riktige ressurser dersom du trenger hjelp")
+    print(
+        "Hei! Velkommen til forbrukertilsynets chatbot. Jeg er her for å svare på spørsmål, eller veilede deg til riktige ressurser dersom du trenger hjelp")
+
 
 def main() -> None:
     introduce_chatbot()
-    while(True):
+    while (True):
         print("\n")
         prompt = input("Still meg et spørsmål: ")
         response = get_response(prompt)
@@ -123,7 +152,7 @@ def main() -> None:
         if prompt == 'stop':
             break
 
-        # Prints out the response and the total run time in seconds
+        # Prints out the response
         print(f"Svar: {response}")
 
     feedback()
