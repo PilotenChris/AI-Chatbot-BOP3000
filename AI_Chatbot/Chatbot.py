@@ -1,15 +1,15 @@
-import os
+import os  # type: ignore
 import torch  # type: ignore
-import transformers
-import time
-import requests
-from Db import collection, generate_embedding
-from pymongo import MongoClient
-from dotenv import dotenv_values
-from llama_index.core import SummaryIndex
-from llama_index.readers.mongodb import SimpleMongoReader
-from transformers import LlamaTokenizer, AutoConfig, LlamaForCausalLM, pipeline, BitsAndBytesConfig
-from torch import cuda, bfloat16
+import transformers  # type: ignore
+import time  # type: ignore
+import requests  # type: ignore
+from Db import collection, generate_embedding  # type: ignore
+from pymongo import MongoClient  # type: ignore
+from dotenv import dotenv_values  # type: ignore
+from llama_index.core import SummaryIndex  # type: ignore
+from llama_index.readers.mongodb import SimpleMongoReader  # type: ignore
+from transformers import LlamaTokenizer, AutoConfig, LlamaForCausalLM, pipeline, BitsAndBytesConfig  # type: ignore
+from torch import cuda, bfloat16  # type: ignore
 
 # feedback_uri = os.getenv('FEEDBACK_URL')
 conversation_history: list = []
