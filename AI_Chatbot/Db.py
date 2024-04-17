@@ -12,6 +12,7 @@ uri = os.getenv('MONGO_URI')
 client = pymongo.MongoClient(uri)
 db = client.Bop3000
 collection = db.TrainingData
+collectionFeedback = db.Feedback
 
 # Huggingcace token & API
 hf_token = os.getenv('HF_TOKEN')
@@ -35,6 +36,5 @@ for doc in collection.find({'Lead_Paragraph': {"$exists": True}}):
     try:
         embedding = generate_embedding(doc['Lead_Paragraph'])
         doc['Lead_Paragraph_embedding_hf'] = embedding
-        collection.replace_one({'_id': doc['_id']}, doc)
     except Exception as e:
         print(f"Failed to update document ID: Error: {e}")

@@ -3,7 +3,7 @@ import torch  # type: ignore
 import transformers  # type: ignore
 import time  # type: ignore
 import requests  # type: ignore
-from Db import collection, generate_embedding  # type: ignore
+from Db import collection, generate_embedding, collectionFeedback  # type: ignore
 from pymongo import MongoClient  # type: ignore
 from dotenv import dotenv_values  # type: ignore
 from llama_index.core import SummaryIndex  # type: ignore
@@ -215,18 +215,14 @@ def feedback() -> str:
     if feedback_choice == 'y':
         feedback_response = input("Din tilbakemelding: ")
 
-        # Prepare data for API request
-        data = {
-            'conversation': '\n'.join(conversation_history),
-            'feedback': feedback_response,
+        # Prepearing data of conversation and feedback for the database
+        feedback_data = {
+            'Conversation': '\n'.join(conversation_history),
+            'Feedback': feedback_response,
         }
 
-        # Add feedback at end of conversation
-        conversation_history.append(f"feedback: {feedback_response}")
-
-        # Send POST request to Django API
-        print(conversation_history)
-        # response =  requests.post(feedback_uri, json=data)
+        # Inserting the feedback data into the feedback collection
+        collectionFeedback.insert_one(feedback_data)
 
     return "Takk for tilbakemeldingen!"
 
@@ -242,11 +238,12 @@ def main() -> None:
         while (True):
             print("\n")
             prompt = input("Still meg et spørsmål: ")
-            response = get_response(prompt)
             # For testing. To be replaced by button on webpage
             if prompt == 'stop':
                 break
-
+            conversation_history.append(f"Question: {prompt}")
+            response = get_response(prompt)
+            conversation_history.append(f"Answer: {response}")
             # Prints out the response
             print(f"Svar: {response}")
 
