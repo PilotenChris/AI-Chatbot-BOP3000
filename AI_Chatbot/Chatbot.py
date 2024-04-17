@@ -27,10 +27,10 @@ tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf")
 """
 
 # Determine if a GPU is available and set the device accordingly
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if cuda.is_available() else "cpu")
 
 # Check if CUDA is available (for informational purposes)
-print(torch.cuda.is_available())
+print(cuda.is_available())
 
 # Configuration for BitsAndBytes, an optimization for model quantization
 bnb_config = BitsAndBytesConfig(
