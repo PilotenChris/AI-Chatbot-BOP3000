@@ -3,7 +3,7 @@ import torch  # type: ignore
 import transformers  # type: ignore
 import time  # type: ignore
 import requests  # type: ignore
-from Db import collection, generate_embedding, collectionFeedback  # type: ignore
+from Db import collection, generate_embedding, collectionFeedback, noCase  # type: ignore
 from pymongo import MongoClient  # type: ignore
 from dotenv import dotenv_values  # type: ignore
 from llama_index.core import SummaryIndex  # type: ignore
@@ -151,7 +151,7 @@ def get_case_response(prompt: str) -> str:
     # Query the MongoDB collection for documents that match the user's prompt
     # using vector search for relevance based on the Lead Paragraph embeddings
     try:
-        results: list = list(collection.aggregate([
+        results: list = list(noCase.aggregate([
             {"$vectorSearch": {
                 "queryVector": generate_embedding(prompt),
                 "path": "Paragraph_embedding_hf",
