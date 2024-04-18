@@ -154,10 +154,10 @@ def get_case_response(prompt: str) -> str:
         results: list = list(collection.aggregate([
             {"$vectorSearch": {
                 "queryVector": generate_embedding(prompt),
-                "path": "Lead_Paragraph_embedding_hf",
+                "path": "Paragraph_embedding_hf",
                 "numCandidates": 1,
                 "limit": 1,
-                "index": "LeadParagraphSemanticSearch",
+                "index": "NoCaseSemanticSearch",
             }}
         ]))
     except ValueError:

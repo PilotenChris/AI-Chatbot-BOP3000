@@ -13,6 +13,7 @@ client = pymongo.MongoClient(uri)
 db = client.Bop3000
 collection = db.TrainingData
 collectionFeedback = db.Feedback
+noCase = db.NoCase
 
 # Huggingcace token & API
 hf_token = os.getenv('HF_TOKEN')
@@ -32,9 +33,22 @@ def generate_embedding(text: str) -> list[float]:
     return response.json()
 
 # Updating documents in the collection
+""""
+TrainingData update
 for doc in collection.find({'Lead_Paragraph': {"$exists": True}}):
     try:
         embedding = generate_embedding(doc['Lead_Paragraph'])
         doc['Lead_Paragraph_embedding_hf'] = embedding
     except Exception as e:
         print(f"Failed to update document ID: Error: {e}")
+        
+    -----------------------------------------------------
+    NoCase collection update
+for doc in noCase.find({'Paragraph': {"$exists": True}}):
+    try:
+        embedding = generate_embedding(doc['Paragraph'])
+        doc['Paragraph_embedding_hf'] = embedding
+        noCase.replace_one({'_id': doc['_id']}, doc)
+    except Exception as e:
+        print(f"Failed to update document ID: Error: {e}")
+        """
