@@ -31,6 +31,7 @@ llama
 llama-2-7b-chat-hf
 models--meta-llama--Llama-2-7b-chat-hf
 models--RuterNorway--Llama-2-7b-chat-norwegian
+models--meta-llama--Meta-Llama-3-8B
 
 
 # PyInstaller
