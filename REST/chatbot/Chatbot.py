@@ -3,7 +3,7 @@ import torch  # type: ignore
 import transformers  # type: ignore
 import time  # type: ignore
 import requests  # type: ignore
-from Db import collection, generate_embedding, collectionFeedback, noCase  # type: ignore
+from .Db import collection, generate_embedding, collectionFeedback, noCase  # type: ignore
 from pymongo import MongoClient  # type: ignore
 from dotenv import dotenv_values  # type: ignore
 from llama_index.core import SummaryIndex  # type: ignore
