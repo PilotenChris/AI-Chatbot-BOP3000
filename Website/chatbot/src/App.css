@@ -9,7 +9,6 @@ html, body {
 #root, .App {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
 }
 
 .main-content {
@@ -75,7 +74,8 @@ nav ul {
 .chatbot-content {
     flex: 1;
     padding: 10px;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .chatbot-close {
@@ -105,6 +105,113 @@ nav ul {
     justify-content: center;
     font-size: 24px;
     z-index: 1000;
+}
+
+.chatbot-options {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.chatbot-options button {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.chatbot-chat {
+    display: flex;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-top: 1px solid #ccc;
+}
+
+.chatbot-chat input[type="text"] {
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 8px 10px;
+    margin-right: 10px;
+}
+
+.chatbot-chat button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.chatbot-finish {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.chatbot-finish input,
+.chatbot-finish textarea {
+    width: 100%;
+    padding: 10px 0px 10px 5px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.chatbot-finish button {
+    padding: 10px;
+    width: 100%;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.chatbot-finish .feedback-section {
+    width: 100%;
+    margin-top: 20px;
+}
+
+@media (max-width: 360px) {
+    .chatbot-finish input,
+    .chatbot-finish textarea,
+    .chatbot-finish button {
+        padding: 8px;
+    }
+}
+
+.message {
+    width: fit-content;
+    max-width: 80%;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    display: flex;
+}
+
+.message.user {
+    background-color: #007BFF;
+    color: white;
+    align-self: flex-end;
+    margin-right: 5px;
+    margin-left: auto;
+}
+
+.message.bot {
+    background-color: #e5e5ea;
+    color: black;
+    align-self: flex-start;
+    margin-left: 5px;
+    margin-right: auto;
 }
 
 .App-header {

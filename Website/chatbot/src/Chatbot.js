@@ -1,10 +1,103 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Chatbot = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isFinished, setIsFinished] = useState(false);
+    const [selectedOption, setSelectedOption] = useState(null);
+    const [messages, setMessages] = useState([]);
+    const [email, setEmail] = useState("");
+    const [feedback, setFeedback] = useState("");
+    const [isFeedbackAllowed, setIsFeedbackAllowed] = useState(false);
 
     const toggleChatbot = () => {
-        setIsOpen(!isOpen);
+        if (isFinished) {
+            // Reset everything and close the chatbox
+            setIsOpen(false);
+            setIsFinished(false);
+            setSelectedOption(null);
+            setMessages([]);
+            setEmail("");
+            setFeedback("");
+            setIsFeedbackAllowed(false);
+        } else {
+            setIsOpen(!isOpen);
+        }
+        
+    };
+
+    // Checks if the user has selected a type of chat before they pressed on the close button
+    // If not then close the chat, else give them the finish page
+    const handleSetFinish = () => {
+        if (selectedOption === null) {
+            setIsOpen(false);
+        } else {
+            setIsFinished(true);
+        }
+    }
+
+    // Handle the chat type the user has selected
+    const handleOptionSelect = (optionNumber) => {
+        setSelectedOption(optionNumber);
+    };
+
+    // Make sure to check if the user are allowed to send feedback as soon as the chat window opens
+    useEffect(() => {
+        const checkFeedbackAllowed = async () => {
+            if (isOpen) {
+                try {
+                    const response = await fetch("YOUR_DJANGO_API_FEEDBACK_PERMISSION_URL");
+                    const data = await response.json();
+                    setIsFeedbackAllowed(data.isFeedbackAllowed);
+                } catch (error) {
+                    console.error("Error checking if feedback is allowed:", error);
+                    setIsFeedbackAllowed(false);
+                }
+            }
+        };
+
+        checkFeedbackAllowed();
+    }, [isOpen]);
+
+    // Send message to the Django REST API and get a answer back
+    const handleSendMessage = async (event) => {
+        event.preventDefault();
+        const message = event.target.elements.message.value;
+        event.target.elements.message.value = "";
+        if (message.trim()) {
+            setMessages([...messages, { text: message, from: "user" }]);
+            const response = await fetch("YOUR_DJANGO_API_URL", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message, option: selectedOption })
+            });
+
+            const data = await response.json();
+            setMessages(messages => [...messages, { text: data.response, from: "bot" }]);
+        }
+    };
+
+    // Send the conversation with the chatbot to the users provided email
+    const handleFinish = async () => {
+        await fetch("YOUR_DJANGO_API_EMAIL_URL", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email, messages })
+        });
+    };
+
+    // Save the chat with the chatbot and the feedback from the user
+    const handleFeedback = async () => {
+        await fetch("YOUR_FJANGO_API_FEEDBACK_URL", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ feedback, messages })
+        });
     };
 
     return (
@@ -14,14 +107,49 @@ const Chatbot = () => {
                     +
                 </button>
             )}
-            {isOpen && (
+            {isOpen && !isFinished && (
                 <div className="chatbot">
                     <div className="chatbot-header">
-                        Chat with Us!
+                        Chatbot for forbrukere
+                        <button className="chatbot-close" onClick={handleSetFinish}>x</button>
+                    </div>
+                    {selectedOption === null ? (
+                        <div className="chatbot-options">
+                            <button onClick={() => handleOptionSelect(0)}>Spørsmål om informasjon</button>
+                            <button onClick={() => handleOptionSelect(1)}>Spørsmål om tips/klage saker</button>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="chatbot-content">
+                                {messages.map((msg, index) => (
+                                    <div key={index} className={`message ${msg.from}`}>
+                                        {msg.text}
+                                    </div>
+                                ))}
+                            </div>
+                            <form className="chatbot-chat" onSubmit={handleSendMessage}>
+                                <input type="text" name="message" placeholder="Spørsmål..." autoComplete="off" />
+                                <button type="submit">Send</button>
+                            </form>
+                        </>
+                    )}
+                </div>
+            )}
+            {isOpen && isFinished && (
+                <div className="chatbot">
+                    <div className="chatbot-header">
+                        Takk for samtalen
                         <button className="chatbot-close" onClick={toggleChatbot}>x</button>
                     </div>
-                    <div className="chatbot-content">
-                        Welcome to our chat service
+                    <div className="chatbot-finish">
+                        <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Din e-post" autoComplete="off" />
+                        <button onClick={handleFinish}>Send e-post</button>
+                        {isFeedbackAllowed && (
+                            <div className="feedback-section">
+                                <textarea value={feedback} onChange={e => setFeedback(e.target.value)} placeholder="Din tilbakemelding" />
+                                <button onClick={handleFeedback}>Send tilbakemelding</button>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
