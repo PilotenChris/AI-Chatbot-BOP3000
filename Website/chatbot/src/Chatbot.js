@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const Chatbot = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -8,6 +8,7 @@ const Chatbot = () => {
     const [email, setEmail] = useState("");
     const [feedback, setFeedback] = useState("");
     const [isFeedbackAllowed, setIsFeedbackAllowed] = useState(false);
+    const initialMessageFetched = useRef(false);
 
     const toggleChatbot = () => {
         if (isFinished) {
@@ -41,6 +42,7 @@ const Chatbot = () => {
     };
 
     // Make sure to check if the user are allowed to send feedback as soon as the chat window opens
+    // Also get the greeting message from the chatbot if it's the first time the user opens the chat
     useEffect(() => {
         const checkFeedbackAllowed = async () => {
             if (isOpen) {
@@ -55,7 +57,21 @@ const Chatbot = () => {
             }
         };
 
+        const featchGreetingMesaage = async () => {
+            if (isOpen && !initialMessageFetched.current) {
+                try {
+                    const response = await fetch("YOUR_DJANGO_API_GREETING_URL");
+                    const data = await response.json();
+                    setMessages([{ text: data.greeting, from: "bot" }]);
+                    initialMessageFetched.current = true;
+                } catch (error) {
+                    console.error("Error featching the greeting message:", error);
+                }
+            }
+        };
+
         checkFeedbackAllowed();
+        featchGreetingMesaage();
     }, [isOpen]);
 
     // Send message to the Django REST API and get a answer back
