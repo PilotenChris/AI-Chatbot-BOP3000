@@ -81,7 +81,7 @@ const Chatbot = () => {
         event.target.elements.message.value = "";
         if (message.trim()) {
             setMessages([...messages, { text: message, from: "user" }]);
-            const response = await fetch("YOUR_DJANGO_API_URL", {
+            const response = await fetch("http://127.0.0.1:8000/chatbot/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

@@ -14,7 +14,7 @@ class ChatbotView(APIView):
         # Processing user input with Llama2
         response_text = get_response(user_input)
         # save chat log to the database
-        chat_log = ChatMessage.objects.create(user_input=user_input, response_text=response_text)
+        # chat_log = ChatMessage.objects.create(user_input=user_input, response_text=response_text)
         # API response
         data = {'response': response_text}
         return Response(data)
@@ -22,7 +22,7 @@ class ChatbotView(APIView):
     def post_case(self, request):
         user_input = request.data.get('text')
         response_text = get_case_response(user_input)
-        chat_log = ChatMessage.objects.create(user_input=user_input, response_text=response_text)
+       # chat_log = ChatMessage.objects.create(user_input=user_input, response_text=response_text)
         data = {'response': response_text}
         return Response(data)
 
