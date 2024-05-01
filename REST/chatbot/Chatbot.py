@@ -217,20 +217,17 @@ def get_case_response(prompt: str) -> str:
     return response
 
 
-def feedback() -> str:
-    print("\nØnsker du å gi en tilbakemelding på svaret du fikk? (y/n)")
-    feedback_choice = input().lower()
-    if feedback_choice == 'y':
-        feedback_response = input("Din tilbakemelding: ")
+def feedback(message_text, feedback_response) -> str:
 
-        # Prepearing data of conversation and feedback for the database
-        feedback_data = {
-            'Conversation': '\n'.join(conversation_history),
-            'Feedback': feedback_response,
-        }
+    # Prepearing data of conversation and feedback for the database
+    feedback_data = {
+        #'Conversation': '\n'.join(conversation_history),
+        'Conversation': message_text,
+        'Feedback': feedback_response,
+    }
 
-        # Inserting the feedback data into the feedback collection
-        collectionFeedback.insert_one(feedback_data)
+    # Inserting the feedback data into the feedback collection
+    collectionFeedback.insert_one(feedback_data)
 
     return "Takk for tilbakemeldingen!"
 

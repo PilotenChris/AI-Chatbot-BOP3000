@@ -47,7 +47,9 @@ const Chatbot = () => {
         const checkFeedbackAllowed = async () => {
             if (isOpen) {
                 try {
-                    const response = await fetch("YOUR_DJANGO_API_FEEDBACK_PERMISSION_URL");
+                    const response = await fetch("http://127.0.0.1:8000/feedback/check/", {
+                    method: "GET"
+                });
                     const data = await response.json();
                     setIsFeedbackAllowed(data.isFeedbackAllowed);
                 } catch (error) {
@@ -57,7 +59,7 @@ const Chatbot = () => {
             }
         };
 
-        const featchGreetingMesaage = async () => {
+        const fetchGreetingMessage = async () => {
             if (isOpen && !initialMessageFetched.current) {
                 try {
                     const response = await fetch("YOUR_DJANGO_API_GREETING_URL");
@@ -71,7 +73,7 @@ const Chatbot = () => {
         };
 
         checkFeedbackAllowed();
-        featchGreetingMesaage();
+        fetchGreetingMessage();
     }, [isOpen]);
 
     // Send message to the Django REST API and get a answer back
@@ -96,7 +98,7 @@ const Chatbot = () => {
 
     // Send the conversation with the chatbot to the users provided email
     const handleFinish = async () => {
-        await fetch("YOUR_DJANGO_API_EMAIL_URL", {
+        await fetch("http://127.0.0.1:8000/chatbot/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -107,7 +109,7 @@ const Chatbot = () => {
 
     // Save the chat with the chatbot and the feedback from the user
     const handleFeedback = async () => {
-        await fetch("YOUR_FJANGO_API_FEEDBACK_URL", {
+        await fetch("http://127.0.0.1:8000/feedback/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
