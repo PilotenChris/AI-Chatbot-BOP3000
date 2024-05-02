@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .Chatbot import get_response, get_case_response, feedback, sendEmail
+from .Chatbot import get_response, get_case_response, feedback, sendEmail, introduce_chatbot
 from rest_framework import status
 from .models import ChatMessage
 from .utils import start_new_session
@@ -77,3 +77,8 @@ class FeedbackSubmitView(APIView):
         message_text = request.data.get('messages')
         feedback(message_text, feedback_response)
         return Response({'message': 'Feedback submitted successfully.'}, status=status.HTTP_200_OK)
+
+class GreetingView(APIView):
+    def get(self, request):
+        greeting_text = introduce_chatbot()
+        return Response({'greeting': greeting_text}, status=status.HTTP_200_OK)

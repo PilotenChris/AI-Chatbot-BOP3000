@@ -255,5 +255,5 @@ def sendEmail(emailadress, chatlog):
 
 
 def introduce_chatbot():
-    print(
-        "Hei! Velkommen til forbrukertilsynets chatbot. Jeg er her for å svare på spørsmål, eller veilede deg til riktige ressurser dersom du trenger hjelp")
+    response = "Hei! Velkommen til forbrukertilsynets chatbot. Jeg er her for å svare på spørsmål, eller veilede deg til riktige ressurser dersom du trenger hjelp"
+    return response

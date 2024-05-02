@@ -62,7 +62,9 @@ const Chatbot = () => {
         const fetchGreetingMessage = async () => {
             if (isOpen && !initialMessageFetched.current) {
                 try {
-                    const response = await fetch("YOUR_DJANGO_API_GREETING_URL");
+                    const response = await fetch("http://127.0.0.1:8000/greeting/", {
+                    method: "GET"
+                });
                     const data = await response.json();
                     setMessages([{ text: data.greeting, from: "bot" }]);
                     initialMessageFetched.current = true;
