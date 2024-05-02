@@ -83,7 +83,10 @@ const Chatbot = () => {
         event.target.elements.message.value = "";
         if (message.trim()) {
             setMessages([...messages, { text: message, from: "user" }]);
-            const response = await fetch("http://127.0.0.1:8000/chatbot/", {
+             const url = selectedOption === 0
+            ? "http://127.0.0.1:8000/information/"
+            : "http://127.0.0.1:8000/complaint/";
+            const response = await fetch(url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -98,7 +101,7 @@ const Chatbot = () => {
 
     // Send the conversation with the chatbot to the users provided email
     const handleFinish = async () => {
-        await fetch("http://127.0.0.1:8000/chatbot/", {
+        await fetch("YOUR_DJANGO_API_EMAIL_URL", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

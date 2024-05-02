@@ -1,5 +1,5 @@
 import os
-from datetime import timezone
+from django.utils import timezone
 
 from dotenv import load_dotenv
 from django.shortcuts import render
@@ -7,20 +7,22 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .Chatbot import get_response, get_case_response, feedback, sendEmail
 from rest_framework import status
-from .models import ChatMessage, chatlog_collection
-from utils import start_new_session
+from .models import ChatMessage
+from .utils import start_new_session
+from .Db import chatlog
 
 
-# Create your views here.
+load_dotenv()
+current_datetime = timezone.datetime.now()
 
 class InformationView(APIView):
     def post(self, request):
         sessionId = start_new_session()
-        user_input = request.data.get('text')
+        user_input = request.data.get('message')
         # Processing user input with Llama2
         response_text = get_response(user_input)
         # save chat log to the database
-        chat_log = ChatMessage.objects.create(sessionId=sessionId, user_input=user_input, response_text=response_text,
+        chat_log = ChatMessage(sessionId=sessionId, user_input=user_input, response_text=response_text,
                                               timestamp=timezone.now())
         chat_log_dict = {
             'sessionId': sessionId,
@@ -28,18 +30,18 @@ class InformationView(APIView):
             'response_text': chat_log.response_text,
             'timestamp': chat_log.timestamp
         }
-        chatlog_collection.object.insert_one(chat_log_dict)
+        chatlog.insert_one(chat_log_dict)
         # API response
         data = {'response': response_text}
         return Response(data)
 
 
 class ComplaintView(APIView):
-    def post_case(self, request):
+    def post(self, request):
         sessionId = start_new_session()
-        user_input = request.data.get('text')
+        user_input = request.data.get('message')
         response_text = get_case_response(user_input)
-        chat_log = ChatMessage.objects.create(sessionId=sessionId,user_input=user_input, response_text=response_text,
+        chat_log = ChatMessage(sessionId=sessionId,user_input=user_input, response_text=response_text,
                                               timestamp=timezone.now())
         chat_log_dict = {
             'sessionId': sessionId,
@@ -47,7 +49,7 @@ class ComplaintView(APIView):
             'response_text': chat_log.response_text,
             'timestamp': chat_log.timestamp
         }
-        chatlog_collection.object.insert_one(chat_log_dict)
+        chatlog.insert_one(chat_log_dict)
         data = {'response': response_text}
         return Response(data)
 
@@ -65,8 +67,8 @@ class ChatHistoryView(APIView):
 
 class FeedbackCheckView(APIView):
     def get(self, request):
-        #isFeedbackAllowed = os.getenv('FEEDBACK_OPEN')
-        is_feedback_allowed = os.getenv('FEEDBACK_OPEN')
+        #is_feedback_allowed = os.getenv('FEEDBACK_OPEN')
+        is_feedback_allowed = True
         return Response({'isFeedbackAllowed': is_feedback_allowed}, status=status.HTTP_200_OK)
 
 class FeedbackSubmitView(APIView):
