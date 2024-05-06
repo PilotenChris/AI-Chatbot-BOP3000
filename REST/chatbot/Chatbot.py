@@ -16,7 +16,6 @@ from email.mime.text import MIMEText
 import os
 from dotenv import load_dotenv
 
-# feedback_uri = os.getenv('FEEDBACK_URL')
 conversation_history: list = []
 
 # Llama-2 from Hugging Face
@@ -221,7 +220,6 @@ def feedback(message_text, feedback_response) -> str:
 
     # Prepearing data of conversation and feedback for the database
     feedback_data = {
-        #'Conversation': '\n'.join(conversation_history),
         'Conversation': message_text,
         'Feedback': feedback_response,
     }

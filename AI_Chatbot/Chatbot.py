@@ -16,7 +16,6 @@ from email.mime.text import MIMEText
 import os
 from dotenv import load_dotenv
 
-# feedback_uri = os.getenv('FEEDBACK_URL')
 conversation_history: list = []
 
 # Llama-2 from Hugging Face
@@ -217,20 +216,16 @@ def get_case_response(prompt: str) -> str:
     return response
 
 
-def feedback() -> str:
-    print("\nØnsker du å gi en tilbakemelding på svaret du fikk? (y/n)")
-    feedback_choice = input().lower()
-    if feedback_choice == 'y':
-        feedback_response = input("Din tilbakemelding: ")
+def feedback(message_text, feedback_response) -> str:
 
-        # Prepearing data of conversation and feedback for the database
-        feedback_data = {
-            'Conversation': '\n'.join(conversation_history),
-            'Feedback': feedback_response,
-        }
+    # Prepearing data of conversation and feedback for the database
+    feedback_data = {
+        'Conversation': message_text,
+        'Feedback': feedback_response,
+    }
 
-        # Inserting the feedback data into the feedback collection
-        collectionFeedback.insert_one(feedback_data)
+    # Inserting the feedback data into the feedback collection
+    collectionFeedback.insert_one(feedback_data)
 
     return "Takk for tilbakemeldingen!"
 
@@ -258,9 +253,8 @@ def sendEmail(emailadress, chatlog):
 
 
 def introduce_chatbot():
-    print(
-        "Hei! Velkommen til forbrukertilsynets chatbot. Jeg er her for å svare på spørsmål, eller veilede deg til riktige ressurser dersom du trenger hjelp")
-
+    response = "Hei! Velkommen til forbrukertilsynets chatbot. Jeg er her for å svare på spørsmål, eller veilede deg til riktige ressurser dersom du trenger hjelp"
+    return response
 
 def main() -> None:
     try:

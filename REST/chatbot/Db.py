@@ -14,7 +14,6 @@ db = client.Bop3000
 collection = db.TrainingData
 collectionFeedback = db.Feedback
 noCase = db.NoCase
-chatlog = db.Chatlog
 
 # Huggingcace token & API
 hf_token = os.getenv('HF_TOKEN')

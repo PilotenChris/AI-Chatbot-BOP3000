@@ -1,5 +1,4 @@
 from django.db import models
-from .Db import chatlog
 # Create your models here.
 
 
