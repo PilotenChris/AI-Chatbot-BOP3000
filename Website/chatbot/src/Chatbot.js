@@ -103,7 +103,7 @@ const Chatbot = () => {
 
     // Send the conversation with the chatbot to the users provided email
     const handleFinish = async () => {
-        await fetch("YOUR_DJANGO_API_EMAIL_URL", {
+        await fetch("http://127.0.0.1:8000/send_email/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
