@@ -1,25 +1,14 @@
-import os
-from django.utils import timezone
 
-from dotenv import load_dotenv
-from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .Chatbot import get_response, get_case_response, feedback, sendEmail, introduce_chatbot
 from rest_framework import status
-from .models import ChatMessage
-from .utils import start_new_session
-
-
-load_dotenv()
-current_datetime = timezone.datetime.now()
 
 class InformationView(APIView):
     def post(self, request):
         user_input = request.data.get('message')
         # Processing user input with Llama2
         response_text = get_response(user_input)
-
         # API response
         data = {'response': response_text}
         return Response(data)
