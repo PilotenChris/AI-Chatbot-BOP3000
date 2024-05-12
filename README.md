@@ -1,4 +1,4 @@
-# AI Chatbot for Forbrukertilsynet (AI Chatbot for the Norwegian Consumer Protection Authority)
+# AI Chatbot for Forbrukertilsynet (Norwegian Consumer Protection Authority)
 
 ## Project Overview
 This Bachelor project, developed at the University of South-Eastern Norway (USN) Bø, was commissioned by Forbrukertilsynet (Norwegian Consumer Protection Authority) to prototype an AI chatbot. This chatbot is designed to assist consumers by helping them navigate the authority's website to find necessary information and determine the appropriate avenue for making complaints.
