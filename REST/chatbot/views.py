@@ -33,16 +33,16 @@ class ComplaintView(APIView):
         return Response(data)
 
 
-class ChatHistoryView(APIView):
+class EmailSenderView(APIView):
     # Send chatlog to email view
     def post(self, request):
-     # user email input
-     email_address = request.data.get('email')
-     # Retrieve chatlog from database
-     chatlog = request.data.get('messages')
-     # call sendEmail function
-     sendEmail(email_address, '\n'.join([f"{msg['from']}: {msg['text']}" for msg in chatlog]))
-     return Response({'request': ''}, status=status.HTTP_200_OK)
+        # user email input
+        email_address = request.data.get('email')
+        # Retrieve chatlog from database
+        chatlog = request.data.get('messages')
+        # formats the message and calls sendEmail function
+        sendEmail(email_address, '\n'.join([f"{msg['from']}: {msg['text']}" for msg in chatlog]))
+        return Response({'request': ''}, status=status.HTTP_200_OK)
 
 class FeedbackCheckView(APIView):
     def get(self, request):
