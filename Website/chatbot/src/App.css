@@ -214,6 +214,25 @@ nav ul {
     margin-right: auto;
 }
 
+h3 {
+    color: #0077cc;
+    margin-bottom: 10px;
+}
+
+ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+ul li {
+    margin-bottom: 5px;
+}
+
+.more-link {
+    color: #0077cc;
+    text-decoration: none;
+}
+
 .App-header {
     background-color: #282c34;
     min-height: 100vh;

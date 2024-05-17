@@ -146,7 +146,7 @@ const Chatbot = () => {
                             <div className="chatbot-content">
                                 {messages.map((msg, index) => (
                                     <div key={index} className={`message ${msg.from}`}>
-                                        {msg.text}
+                                        <div dangerouslySetInnerHTML={{ __html: msg.text}} />
                                     </div>
                                 ))}
                             </div>
