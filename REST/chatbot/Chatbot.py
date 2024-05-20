@@ -13,7 +13,6 @@ from torch import cuda, bfloat16  # type: ignore
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import os
 from dotenv import load_dotenv
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
@@ -114,7 +113,6 @@ def generate_answer_with_context(final_prompt: str) -> str:
     inputs = tokenizer(final_prompt, return_tensors="pt").to(device)
     outputs = model.generate(**inputs, max_new_tokens=512, pad_token_id=tokenizer.eos_token_id, temperature=0.01)
     full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    print(full_response)
 
     # Find the start index of the answer in the model's response and extract the answer
     answer: int = full_response.rfind(answer_indicator) + len(answer_indicator)
