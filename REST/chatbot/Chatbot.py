@@ -18,7 +18,6 @@ from dotenv import load_dotenv
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 
-conversation_history: list = []
 
 # Llama-2 from Hugging Face
 model_dir = "RuterNorway/Llama-2-7b-chat-norwegian"
@@ -233,7 +232,7 @@ def get_case_response(prompt: str) -> str:
 
 
 def feedback(message_text, feedback_response) -> str:
-    # Prepearing data of conversation and feedback for the database
+    # Preparing data of conversation and feedback for the database
     feedback_data = {
         'Conversation': message_text,
         'Feedback': feedback_response,

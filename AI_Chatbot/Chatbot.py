@@ -17,7 +17,6 @@ import os
 from dotenv import load_dotenv
 from urllib.parse import urlparse
 
-conversation_history: list = []
 
 # Llama-2 from Hugging Face
 model_dir = "RuterNorway/Llama-2-7b-chat-norwegian"
@@ -198,7 +197,6 @@ def get_case_response(prompt: str) -> str:
     response: str
 
     # Check if the search query returned any results
-    # Check if the search query returned any results
     if results:
         full_context: str = "Basert på dette dokumentet, oppsummer innholdet:\n"
 
@@ -231,8 +229,7 @@ def get_case_response(prompt: str) -> str:
 
 
 def feedback(message_text, feedback_response) -> str:
-
-    # Prepearing data of conversation and feedback for the database
+    # Preparing data of conversation and feedback for the database
     feedback_data = {
         'Conversation': message_text,
         'Feedback': feedback_response,
@@ -242,6 +239,7 @@ def feedback(message_text, feedback_response) -> str:
     collectionFeedback.insert_one(feedback_data)
 
     return "Takk for tilbakemeldingen!"
+
 
 def sendEmail(emailadress, chatlog):
     # Sets up SMTP
@@ -271,15 +269,14 @@ def introduce_chatbot():
                 "deg til riktige ressurser dersom du trenger hjelp")
     return response
 
+
 def main() -> None:
     try:
         introduce_chatbot()
         while (True):
             print("\n")
             prompt = input("Still meg et spørsmål: ")
-            conversation_history.append(f"Question: {prompt}")
             response = get_response(prompt)
-            conversation_history.append(f"Answer: {response}")
             # Prints out the response
             print(f"Svar: {response}")
 

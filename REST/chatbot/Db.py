@@ -4,10 +4,9 @@ import pymongo
 from dotenv import load_dotenv
 import requests
 
-# https://docs.llamaindex.ai/en/latest/examples/data_connectors/MongoDemo.html
-
 load_dotenv()
-# Database connection
+
+# Database connection information
 uri = os.getenv('MONGO_URI')
 client = pymongo.MongoClient(uri)
 db = client.Bop3000
@@ -15,7 +14,7 @@ collection = db.TrainingData
 collectionFeedback = db.Feedback
 noCase = db.NoCase
 
-# Huggingcace token & API
+# Huggingface token & API
 hf_token = os.getenv('HF_TOKEN')
 embedding_url = os.getenv('EMBEDDING_URL')
 

@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from .Chatbot import get_response, get_case_response, feedback, sendEmail, introduce_chatbot
 from rest_framework import status
 
+
 class InformationView(APIView):
     def post(self, request):
         user_input = request.data.get('message')
@@ -33,10 +34,12 @@ class EmailSenderView(APIView):
         sendEmail(email_address, chatlog)
         return Response({'request': ''}, status=status.HTTP_200_OK)
 
+
 class FeedbackCheckView(APIView):
     def get(self, request):
         is_feedback_allowed = True
         return Response({'isFeedbackAllowed': is_feedback_allowed}, status=status.HTTP_200_OK)
+
 
 class FeedbackSubmitView(APIView):
     def post(self, request):
@@ -44,6 +47,7 @@ class FeedbackSubmitView(APIView):
         message_text = request.data.get('messages')
         feedback(message_text, feedback_response)
         return Response({'message': 'Feedback submitted successfully.'}, status=status.HTTP_200_OK)
+
 
 class GreetingView(APIView):
     def get(self, request):
