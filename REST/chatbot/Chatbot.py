@@ -16,6 +16,7 @@ from email.mime.text import MIMEText
 import os
 from dotenv import load_dotenv
 from urllib.parse import urlparse
+from bs4 import BeautifulSoup
 
 conversation_history: list = []
 
@@ -245,6 +246,17 @@ def feedback(message_text, feedback_response) -> str:
 
 
 def sendEmail(emailadress, chatlog):
+    # Filters and formats the incoming chatlog
+    chatlog_final = ''
+    for msg in chatlog:
+        text = BeautifulSoup(msg['text'], 'html.parser')
+        allowed_tags = ['a', 'h3', 'p', 'li', 'ul', ]  # Tags allowed through the filtering
+        for tag in text.find_all():
+            if tag.name not in allowed_tags:
+                tag.unwrap()
+        cleaned_html = str(text)
+        chatlog_final += f"<p><strong>{msg['from']}</strong>: {cleaned_html}</p>"
+
     # Sets up SMTP
     smtp_server = 'smtp-mail.outlook.com'
     smtp_port = 587
@@ -258,7 +270,7 @@ def sendEmail(emailadress, chatlog):
     msg['Subject'] = 'Chatlog forbrukertilsynet'
 
     # Adds chatlog to message body
-    msg.attach(MIMEText(chatlog, 'plain'))
+    msg.attach(MIMEText(chatlog_final, 'html'))
 
     # Connect to SMTP server and send email
     with smtplib.SMTP(smtp_server, smtp_port) as server:

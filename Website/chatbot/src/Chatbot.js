@@ -103,13 +103,19 @@ const Chatbot = () => {
 
     // Send the conversation with the chatbot to the users provided email
     const handleFinish = async () => {
-        await fetch("http://127.0.0.1:8000/send_email/", {
+        const response = await fetch("http://127.0.0.1:8000/send_email/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({ email, messages })
         });
+        if (response.ok) {
+            setEmail('');
+            console.log('E-post sendt.');
+        } else {
+            console.error('E-post error', response.status);
+        }
     };
 
     // Save the chat with the chatbot and the feedback from the user

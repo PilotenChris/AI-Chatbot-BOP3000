@@ -29,8 +29,8 @@ class EmailSenderView(APIView):
         email_address = request.data.get('email')
         # Retrieve chatlog from database
         chatlog = request.data.get('messages')
-        # formats the message and calls sendEmail function
-        sendEmail(email_address, '\n'.join([f"{msg['from']}: {msg['text']}" for msg in chatlog]))
+        # calls the sendEmail function which formats the text before sending it
+        sendEmail(email_address, chatlog)
         return Response({'request': ''}, status=status.HTTP_200_OK)
 
 class FeedbackCheckView(APIView):
