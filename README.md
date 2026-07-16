@@ -37,6 +37,7 @@ Navigate to the root directory of the project, where the `requirements.txt` file
 conda install -c anaconda protobuf
 pip install -r requirements.txt
 ```
+
 ### Configure Environment Variables
 Ensure you create a `.env` file in both `/REST/` and `/AI_Chatbot/` folders with the following fields:
 
@@ -48,6 +49,7 @@ Ensure you create a `.env` file in both `/REST/` and `/AI_Chatbot/` folders with
 - `SMTP_USERNAME=your_email_username` — Username for email service.
 - `SMTP_PASS=your_email_password` — Password for email service.
 - `EMBEDDING_URL=your_huggingface_api_url` — URL for Hugging Face API inference.
+
 ### Running the Project
 - **Django REST API**: Navigate to `/REST/` and execute:
 ```bash
@@ -89,7 +91,23 @@ python Chatbot.py
   "Link": ["URLs to case-specific actions"]
 }
 ```
+
+## Demo Visualization
+The **first image** shows the chatbot interface presented to the user when opening the chatbot. The user can choose between two conversation modes:
+- **Information questions**: Assists users in finding relevant information from the Forbrukertilsynet website (Norwegian Consumer Protection Authority).
+- **Questions about tips or complaint cases**: Helps users determine the correct authority or process for submitting tips or consumer complaints.
+
+Depending on the selected option, the chatbot retrieves information from different knowledge sources and tailors its responses accordingly.
+
+The **second image** demonstrates a conversation between a user and the AI chatbot. In this example, the user asks for information about the **Digital Services Act (Digitalytelsesloven)**. The chatbot provides a summarized explanation, highlights relevant topics, and includes a link to the corresponding page on the Forbrukertilsynet website for additional information.
+
+
+![The AI chatbot interface showing the two available conversation modes. Users can choose between asking general information questions or receiving guidance on submitting tips and consumer complaints.](https://github.com/PilotenChris/AI-Chatbot-BOP3000/blob/main/Visual_Demo_Images/BOP_3000_Functional_demo_Visualization_1_2.png "The AI chatbot interface with the two available conversation modes.")
+
+![Example conversation between a user and the AI chatbot. The chatbot answers a question about the Digital Services Act, summarizes relevant information, and provides a link to the corresponding page on the Forbrukertilsynet website for further reading.](https://github.com/PilotenChris/AI-Chatbot-BOP3000/blob/main/Visual_Demo_Images/BOP_3000_Functional_demo_Visualization_2_2.png "Example conversation showing how the AI chatbot answers user questions using information from Forbrukertilsynet.")
+
 ## Contributon
 Feel free to fork this project, clone it, or incorporate it into your own work. As this was developed as a Bachelor project, there may not be further updates or active maintenance.
+
 ## License
 This project is open-sourced under the MIT License. See the [LICENSE](LICENSE) file for more details.
